@@ -27,6 +27,9 @@
 .kpi-box-container {
   display: flex;
   justify-content: center;
+
+
+  
   margin-top: 20px;
 }
 
@@ -151,4 +154,34 @@ export default KPIBox;
 .latest-month-name {
   font-style: italic;
 }
+
+
+
+
+
+// KPIDataBox.js
+import React from 'react';
+
+const KPIDataBox = ({ kpiData }) => {
+  const { kpi_name, latest_month_name, latest_month_volume, yoy_percent, yoy_performance } = kpiData;
+
+  // Determine arrow direction based on yoy_percent
+  const arrowDirection = yoy_percent < 0 ? 'down' : 'up';
+
+  // Determine arrow color based on yoy_performance
+  const arrowColor = yoy_performance === 'good' ? 'green' : 'red';
+
+  return (
+    <div className="kpi-data-box">
+      <div className="kpi-name">{kpi_name}</div>
+      <div className="latest-month-volume">
+        <span>{latest_month_volume}</span>
+        <span className={`arrow ${arrowDirection}`} style={{ color: arrowColor }}></span>
+      </div>
+      <div className="latest-month-name">{latest_month_name}</div>
+    </div>
+  );
+};
+
+export default KPIDataBox;
 
