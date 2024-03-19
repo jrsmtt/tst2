@@ -48,3 +48,52 @@ const ParentComponent = () => {
 
 export default ParentComponent;
 
+
+
+
+
+
+
+// TableModal.js
+import React from 'react';
+import { Modal, Paper, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+
+const TableModal = ({ open, handleClose, tableViewData }) => {
+  const renderTableData = () => {
+    return Object.keys(tableViewData).map((key, index) => (
+      <TableRow key={index}>
+        <TableCell component="th" scope="row">{key}</TableCell>
+        <TableCell>{tableViewData[key]}</TableCell>
+      </TableRow>
+    ));
+  };
+
+  return (
+    <Modal open={open} onClose={handleClose}>
+      <div style={{ top: '50%', left: '50%', transform: 'translate(-50%, -50%)', position: 'absolute', width: '50%', maxHeight: '70%', overflow: 'auto', backgroundColor: 'white', padding: '20px', borderRadius: '8px' }}>
+        <Typography variant="h5" gutterBottom>
+          Table View Data
+        </Typography>
+        <Paper elevation={3} style={{ padding: '10px' }}>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Key</TableCell>
+                  <TableCell>Value</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {renderTableData()}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      </div>
+    </Modal>
+  );
+};
+
+export default TableModal;
+
+
