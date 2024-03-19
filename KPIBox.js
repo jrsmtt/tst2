@@ -106,3 +106,49 @@ const KPIBox = ({ data }) => {
 };
 
 export default KPIBox;
+
+
+
+/* KPIDataBox.css */
+
+.kpi-data-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.kpi-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.latest-month-volume {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.arrow {
+  margin-left: 5px;
+}
+
+.arrow.up {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(-135deg);
+}
+
+.arrow.down {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(45deg);
+}
+
+.latest-month-name {
+  font-style: italic;
+}
+
