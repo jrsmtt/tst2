@@ -54,3 +54,88 @@ const processData = (data) => {
 };
 
 export default PivotChart;
+
+
+
+
+import React, { useState, useEffect } from 'react';
+import Chart from 'chart.js/auto';
+
+const PivotChart = ({ jsonData }) => {
+  const [pivotData, setPivotData] = useState(null);
+
+  useEffect(() => {
+    if (jsonData) {
+      // Step 1: Parse JSON string into JavaScript object
+      const data = JSON.parse(jsonData);
+
+      // Step 2: Create pivot table structure
+      const pivotTable = {};
+      data.forEach(entry => {
+        const month = new Date(entry.reporting_month).getMonth() + 1;
+        const year = new Date(entry.reporting_month).getFullYear();
+        const key = `${year}-${month}`;
+        if (!pivotTable[key]) {
+          pivotTable[key] = {};
+        }
+        if (!pivotTable[key][entry.portfolio]) {
+          pivotTable[key][entry.portfolio] = {};
+        }
+        pivotTable[key][entry.portfolio][entry.product] = entry.open_accounts;
+      });
+
+      setPivotData(pivotTable);
+    }
+  }, [jsonData]);
+
+  useEffect(() => {
+    if (pivotData) {
+      // Step 4: Create chart using pivot table data
+      const labels = Object.keys(pivotData);
+      const portfolios = Object.keys(pivotData[labels[0]]);
+      const datasets = portfolios.map(portfolio => {
+        return {
+          label: portfolio,
+          data: labels.map(label => {
+            return Object.values(pivotData[label][portfolio]).reduce((acc, val) => acc + val, 0);
+          }),
+          backgroundColor: getRandomColor(),
+        };
+      });
+
+      const ctx = document.getElementById('pivotChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: datasets,
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  }, [pivotData]);
+
+  return (
+    <div>
+      <canvas id="pivotChart" width="400" height="400"></canvas>
+    </div>
+  );
+};
+
+function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+export default PivotChart;
+
