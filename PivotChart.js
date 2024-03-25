@@ -381,3 +381,40 @@ const renderTable = () => {
   );
 };
 
+
+const renderTable = () => {
+  // Extract months and portfolios from pivotData
+  const months = Object.keys(pivotData || {});
+  const portfolios = Object.keys(pivotData && pivotData[months[0]] || {});
+
+  return (
+    <div style={{ maxWidth: '800px', overflowX: 'auto' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #ddd' }}>
+        <thead>
+          <tr style={{ backgroundColor: '#f2f2f2' }}>
+            <th style={{ padding: '8px', border: '1px solid #ddd' }}>Portfolio</th>
+            {months.map(month => (
+              <th key={month} style={{ padding: '8px', border: '1px solid #ddd' }}>{month}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {portfolios.map((portfolio, index) => (
+            <tr key={portfolio} style={{ border: '1px solid #ddd', borderTop: index === 0 ? 'none' : '1px solid #ddd' }}>
+              <td style={{ padding: '8px', borderRight: '1px solid #ddd' }}>{portfolio}</td>
+              {months.map(month => (
+                <td key={`${portfolio}-${month}`} style={{ padding: '8px', borderRight: '1px solid #ddd' }}>
+                  {pivotData[month]?.[portfolio]
+                    ? Object.values(pivotData[month][portfolio]).reduce((acc, val) => acc + val, 0)
+                    : 0
+                  }
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
