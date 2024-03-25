@@ -331,3 +331,53 @@ export default PivotChart;
 </table>
 
 
+
+
+const renderTable = () => {
+    // Extract months and portfolios from pivotData
+    const months = Object.keys(pivotData || {});
+    const portfolios = Object.keys(pivotData && pivotData[months[0]] || {});
+
+    return (
+      <table>
+        <thead>
+          <tr>
+            <th>Portfolio</th>
+            {months.map(month => (
+              <th key={month}>{month}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {portfolios.map(portfolio => (
+            <tr key={portfolio}>
+              <td>{portfolio}</td>
+              {months.map(month => (
+                <td key={`${portfolio}-${month}`}>
+                  {pivotData[month]?.[portfolio]
+                    ? Object.values(pivotData[month][portfolio]).reduce((acc, val) => acc + val, 0)
+                    : 0
+                  }
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
+
+  return (
+    <div>
+      <select value={selectedOption} onChange={handleOptionChange}>
+        <option value="chart">Chart</option>
+        <option value="table">Table</option>
+      </select>
+      {selectedOption === 'chart' && (
+        <canvas id="pivotChart" width="400" height="400"></canvas>
+      )}
+      {selectedOption === 'table' && renderTable()}
+    </div>
+  );
+};
+
