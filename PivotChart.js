@@ -308,3 +308,26 @@ function getRandomColor() {
 export default PivotChart;
 
 
+
+<table>
+  <thead>
+    <tr>
+      <th>Portfolio</th>
+      {Object.keys(pivotData || {}).map(month => (
+        <th key={month}>{month}</th>
+      ))}
+    </tr>
+  </thead>
+  <tbody>
+    {Object.keys(pivotData && pivotData[Object.keys(pivotData)[0]] || {}).map(portfolio => (
+      <tr key={portfolio}>
+        <td>{portfolio}</td>
+        {Object.values(pivotData || {}).map(monthData => (
+          <td key={portfolio + '-' + monthData}>{monthData[portfolio] || 0}</td>
+        ))}
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+
