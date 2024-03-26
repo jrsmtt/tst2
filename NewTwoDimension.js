@@ -131,3 +131,74 @@ function getRandomColor() {
 }
 
 export default PivotChart;
+
+
+
+//second Update
+
+import React, { useRef,useEffect } from 'react';
+import Chart from 'chart.js/auto';
+
+const PivotChart = ({ data, dimensions, reportingMonth, metric, dimension1 }) => {
+    const chartInstance = useRef(null);
+  useEffect(() => {
+    if(chartInstance.current){
+                chartInstance.current.destroy();
+            }
+    if (data.length === 0 || !dimension1 || !reportingMonth || !metric) return;
+
+    const pivotTable = {};
+    data.forEach(entry => {
+      const key = entry[dimension1];
+      if (!pivotTable[key]) {
+        pivotTable[key] = {};
+      }
+      const monthYear = new Date(entry[reportingMonth]).toLocaleString('en-us', { month: 'short' }) + '-' + new Date(entry[reportingMonth]).getFullYear();
+      pivotTable[key][monthYear] = entry[metric];
+    });
+
+    const labels = Object.keys(pivotTable[Object.keys(pivotTable)[0]]);
+    const datasets = Object.keys(pivotTable).map(label => ({
+      label: label,
+      data: labels.map(monthYear => pivotTable[label][monthYear] || 0),
+      backgroundColor: getRandomColor(),
+    }));
+
+    const ctx = document.getElementById('pivotChart').getContext('2d');
+    chartInstance.current = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: datasets,
+      },
+      options: {
+        scales: {
+          x: {
+            stacked: true,
+          },
+          y: {
+            stacked: true,
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+  }, [data, dimensions, reportingMonth, metric, dimension1]);
+
+  return (
+    <div>
+      <canvas id="pivotChart" width="400" height="400"></canvas>
+    </div>
+  );
+};
+
+function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+export default PivotChart;
