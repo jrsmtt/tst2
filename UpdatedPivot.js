@@ -27,6 +27,69 @@ const PivotTable = ({ data }) => {
     return pivotTable;
   };
 
+
+
+//special
+  import React, { useState, useEffect } from 'react';
+
+const PivotTable = ({ data, dimensions, reportingMonth, metric, dimension1 }) => {
+  const [pivotData, setPivotData] = useState([]);
+  const [pivotTable, setPivotTable] = useState({}); // Initialize empty object
+
+  useEffect(() => {
+    if (data.length === 0 || !dimension1 || !reportingMonth || !metric) return;
+
+    const newPivotTable = {}; // Create a new object for each update
+    data.forEach(entry => {
+      const key = entry[dimension1];
+      if (!newPivotTable[key]) {
+        newPivotTable[key] = {};
+      }
+      const monthYear = new Date(entry[reportingMonth]).toLocaleString('en-us', { month: 'short' }) + '-' + new Date(entry[reportingMonth]).getFullYear();
+      newPivotTable[key][monthYear] = (newPivotTable[key][monthYear] || 0) + entry[metric];
+    });
+
+    setPivotTable(newPivotTable); // Update pivotTable state
+    const tableData = Object.keys(newPivotTable).map(rowLabel => ({
+      [dimension1]: rowLabel,
+      ...Object.entries(newPivotTable[rowLabel]).reduce((acc, [monthYear, value]) => {
+        acc[monthYear] = value;
+        return acc;
+      }, {}),
+    }));
+
+    setPivotData(tableData);
+  }, [data, dimensions, reportingMonth, metric, dimension1]);
+
+  return (
+    <div className="pivot-table">
+      <table>
+        <thead>
+          <tr>
+            <th>{dimension1}</th>
+            {Object.keys(pivotData.length > 0 ? pivotData[0] : {}) // Handle empty data gracefully
+              .map(monthYear => (
+                <th key={monthYear}>{monthYear}</th>
+              ))}
+          </tr>
+        </thead>
+        <tbody>
+          {pivotData.map((row, index) => (
+            <tr key={index}>
+              {Object.entries(row).map(([key, value]) => (
+                <td key={key}>{value}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default PivotTable;
+
+
   if (!data || data.length === 0) {
     return <div>No data available</div>;
   }
