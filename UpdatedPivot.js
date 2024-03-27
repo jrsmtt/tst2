@@ -400,3 +400,32 @@ const PivotTable = ({ jsonData, dimensions, reportingMonth, metric }) => {
 };
 
 export default PivotTable;
+
+
+
+
+
+<div className="pivot-table">
+      <table style={{ borderCollapse: 'collapse' }}>
+        <thead>
+          <tr style={{ border: '1px solid black' }}>
+            <th style={{ border: '1px solid black' }}>{dimension1}</th>
+            {Object.keys(pivotData.length > 0 ? pivotData[0] : {}) // Handle empty data gracefully
+              .map(monthYear => (
+                <th key={monthYear} style={{ border: '1px solid black' }}>{monthYear}</th>
+              ))}
+          </tr>
+        </thead>
+        <tbody>
+          {pivotData.map((row, index) => (
+            <tr key={index}>
+              {Object.entries(row).map(([key, value]) => (
+                <td key={key} style={{ border: '1px solid black', padding: '8px' }}>
+                  {typeof value === 'number' ? formatToMillions(value) : value}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
