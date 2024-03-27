@@ -336,3 +336,67 @@ const PivotTable = ({ data, dimensions, reportingMonth, metric, dimension1 }) =>
 };
 
 export default PivotTable;
+
+
+//final one
+
+const PivotTable = ({ jsonData, dimensions, reportingMonth, metric }) => {
+  // Function to generate the pivot table data
+  const data = JSON.parse(jsonData);
+  const generatePivotTableData = () => {
+    const pivotTable = {};
+    // Loop through the data to create the pivot table
+    data.forEach(entry => {
+      const key = entry[dimensions[0]]; // Dimension 1 as key
+      const monthYear = new Date(entry[reportingMonth]).toLocaleString('en-us', { month: 'short' }) + '-' + new Date(entry[reportingMonth]).getFullYear(); // Reporting month
+      // Initialize the pivot table object if key does not exist
+      if (!pivotTable[key]) {
+        pivotTable[key] = {};
+      }
+      // Assign metric value to the pivot table
+      pivotTable[key][monthYear] = entry[metric];
+    });
+    return pivotTable;
+  };
+
+  // Function to render the pivot table header
+  const renderTableHeader = () => {
+    return (
+      <tr>
+        <th>{dimensions[0]}</th>
+        {Object.keys(pivotTable[Object.keys(pivotTable)[0]]).map(monthYear => (
+          <th key={monthYear}>{monthYear}</th>
+        ))}
+      </tr>
+    );
+  };
+
+  // Function to render the pivot table body
+  const renderTableBody = () => {
+    return Object.entries(pivotTable).map(([label, data]) => (
+      <tr key={label}>
+        <td>{label}</td>
+        {Object.values(data).map((value, index) => (
+          <td key={index}>{value || 0}</td>
+        ))}
+      </tr>
+    ));
+  };
+
+  const pivotTable = generatePivotTableData(); // Generate pivot table data
+
+  return (
+    <div>
+      <table style={{ border: '1px solid black', borderCollapse: 'collapse', marginTop: '20px' }}>
+        <thead>
+          {renderTableHeader()}
+        </thead>
+        <tbody>
+          {renderTableBody()}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default PivotTable;
