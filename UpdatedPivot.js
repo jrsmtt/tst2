@@ -63,3 +63,82 @@ const PivotTable = ({ data }) => {
 };
 
 export default PivotTable;
+
+
+
+
+//Updated One plus
+
+import React, { useEffect, useRef } from 'react';
+
+const PivotTable = ({ data, reportingMonth, metric, dimension1 }) => {
+    const chartInstance = useRef(null);
+
+    useEffect(() => {
+        if (chartInstance.current) {
+            chartInstance.current.destroy();
+        }
+        if (data.length === 0 || !dimension1 || !reportingMonth || !metric) return;
+
+        const pivotTable = {};
+        data.forEach(entry => {
+            const key = entry[dimension1];
+            if (!pivotTable[key]) {
+                pivotTable[key] = {};
+            }
+            const monthYear = new Date(entry[reportingMonth]).toLocaleString('en-us', { month: 'short' }) + '-' + new Date(entry[reportingMonth]).getFullYear();
+            pivotTable[key][monthYear] = entry[metric];
+        });
+
+        renderPivotTable(pivotTable);
+    }, [data, reportingMonth, metric, dimension1]);
+
+    const renderPivotTable = (pivotTable) => {
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+
+        // Create header row
+        const headerRow = document.createElement('tr');
+        const headerCell = document.createElement('th');
+        headerCell.textContent = dimension1;
+        headerRow.appendChild(headerCell);
+        for (const monthYear in pivotTable[Object.keys(pivotTable)[0]]) {
+            const monthYearParts = monthYear.split('-');
+            const month = monthYearParts[0];
+            const year = monthYearParts[1];
+            const monthYearCell = document.createElement('th');
+            monthYearCell.textContent = `${month} ${year}`;
+            headerRow.appendChild(monthYearCell);
+        }
+        thead.appendChild(headerRow);
+
+        // Create body rows
+        for (const dimensionValue in pivotTable) {
+            const bodyRow = document.createElement('tr');
+            const dimensionCell = document.createElement('td');
+            dimensionCell.textContent = dimensionValue;
+            bodyRow.appendChild(dimensionCell);
+            for (const monthYear in pivotTable[dimensionValue]) {
+                const metricValue = pivotTable[dimensionValue][monthYear];
+                const metricCell = document.createElement('td');
+                metricCell.textContent = metricValue;
+                bodyRow.appendChild(metricCell);
+            }
+            tbody.appendChild(bodyRow);
+        }
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+
+        const pivotChartContainer = document.getElementById('pivotChart');
+        pivotChartContainer.innerHTML = '';
+        pivotChartContainer.appendChild(table);
+    };
+
+    return (
+        <div id="pivotChart"></div>
+    );
+};
+
+export default PivotTable;
