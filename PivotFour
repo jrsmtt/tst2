@@ -1,0 +1,66 @@
+import React, { useState, useEffect } from 'react';
+
+const PivotTable = ({ data, dimensions, reportingMonth, metric }) => {
+  const [pivotTable, setPivotTable] = useState({});
+
+  useEffect(() => {
+    if (!data || !data.length || !dimensions || dimensions.length < 2 || !reportingMonth || !metric) return;
+
+    const newPivotTable = {};
+
+    // Create pivot table structure
+    data.forEach(entry => {
+      const key = dimensions.map(dim => entry[dim]).join('-');
+      if (!newPivotTable[key]) {
+        newPivotTable[key] = {};
+      }
+      const monthYear = new Date(entry[reportingMonth]).toLocaleString('en-us', { month: 'short' }) + '-' + new Date(entry[reportingMonth]).getFullYear();
+      newPivotTable[key][monthYear] = entry[metric];
+    });
+
+    setPivotTable(newPivotTable);
+  }, [data, dimensions, reportingMonth, metric]);
+
+  // Render table header
+  const renderTableHeader = () => {
+    return (
+      <tr>
+        {dimensions.map((dim, index) => (
+          <th key={index}>{dim}</th>
+        ))}
+        {Object.keys(pivotTable).length > 0 && Object.keys(pivotTable[Object.keys(pivotTable)[0]]).map(monthYear => (
+          <th key={monthYear}>{monthYear}</th>
+        ))}
+      </tr>
+    );
+  };
+
+  // Render table body
+  const renderTableBody = () => {
+    return Object.keys(pivotTable).map((key, index) => (
+      <tr key={index}>
+        {key.split('-').map((dimValue, idx) => (
+          <td key={idx}>{dimValue}</td>
+        ))}
+        {Object.keys(pivotTable[key]).map((monthYear, idx) => (
+          <td key={idx}>{pivotTable[key][monthYear]}</td>
+        ))}
+      </tr>
+    ));
+  };
+
+  return (
+    <div className="pivot-table">
+      <table>
+        <thead>
+          {renderTableHeader()}
+        </thead>
+        <tbody>
+          {renderTableBody()}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default PivotTable;
