@@ -64,3 +64,20 @@ const PivotTable = ({ data, dimensions, reportingMonth, metric }) => {
 };
 
 export default PivotTable;
+
+
+.pivot-table table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.pivot-table th, .pivot-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.pivot-table th {
+  background-color: #f2f2f2;
+}
+
