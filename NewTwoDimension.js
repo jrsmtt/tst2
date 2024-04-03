@@ -202,3 +202,14 @@ function getRandomColor() {
 }
 
 export default PivotChart;
+
+
+onClick: (e, legendItem) => {
+              const index = legendItem.datasetIndex;
+              const chart = legendItem.chart;
+              const meta = chart.getDatasetMeta(index);
+
+              // Toggle visibility of dataset when legend item is clicked
+              meta.hidden = meta.hidden === null ? !chart.data.datasets[index].hidden : null;
+              chart.update();
+            },
